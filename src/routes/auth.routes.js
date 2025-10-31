@@ -42,20 +42,40 @@ router.post(
       .optional()
       .matches(/^[0-9]{8,15}$/)
       .withMessage('Teléfono inválido'),
-    // Validaciones para organización
+    // Validaciones condicionales para organización
     body('organizationName')
-      .if(body('role').equals('organization'))
+      .if((value, { req }) => req.body.role === 'organization')
       .notEmpty()
       .withMessage('El nombre de la organización es requerido'),
-    // Validaciones para veterinaria
+    body('description')
+      .if((value, { req }) => req.body.role === 'organization')
+      .optional()
+      .isLength({ max: 1000 })
+      .withMessage('La descripción no puede exceder 1000 caracteres'),
+    body('capacity')
+      .if((value, { req }) => req.body.role === 'organization')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('La capacidad debe ser un número positivo'),
+    // Validaciones condicionales para veterinaria
     body('clinicName')
-      .if(body('role').equals('veterinary'))
+      .if((value, { req }) => req.body.role === 'veterinary')
       .notEmpty()
       .withMessage('El nombre de la clínica es requerido'),
     body('licenseNumber')
-      .if(body('role').equals('veterinary'))
+      .if((value, { req }) => req.body.role === 'veterinary')
       .notEmpty()
       .withMessage('El número de licencia es requerido'),
+    body('latitude')
+      .if((value, { req }) => req.body.role === 'veterinary' && req.body.latitude)
+      .optional()
+      .isFloat({ min: -90, max: 90 })
+      .withMessage('Latitud inválida'),
+    body('longitude')
+      .if((value, { req }) => req.body.role === 'veterinary' && req.body.longitude)
+      .optional()
+      .isFloat({ min: -180, max: 180 })
+      .withMessage('Longitud inválida'),
     validationMiddleware
   ],
   register
