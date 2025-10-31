@@ -52,11 +52,21 @@ router.post(
       .optional()
       .isLength({ max: 1000 })
       .withMessage('La descripción no puede exceder 1000 caracteres'),
+    body('website')
+      .if((value, { req }) => req.body.role === 'organization')
+      .optional()
+      .isURL()
+      .withMessage('El sitio web debe ser una URL válida'),
     body('capacity')
       .if((value, { req }) => req.body.role === 'organization')
       .optional()
       .isInt({ min: 0 })
       .withMessage('La capacidad debe ser un número positivo'),
+    body('logoUrl')
+      .if((value, { req }) => req.body.role === 'organization')
+      .optional()
+      .isURL()
+      .withMessage('El logo debe ser una URL válida'),
     // Validaciones condicionales para veterinaria
     body('clinicName')
       .if((value, { req }) => req.body.role === 'veterinary')
@@ -66,6 +76,16 @@ router.post(
       .if((value, { req }) => req.body.role === 'veterinary')
       .notEmpty()
       .withMessage('El número de licencia es requerido'),
+    body('specialties')
+      .if((value, { req }) => req.body.role === 'veterinary')
+      .optional()
+      .isArray()
+      .withMessage('Las especialidades deben ser un array'),
+    body('businessHours')
+      .if((value, { req }) => req.body.role === 'veterinary')
+      .optional()
+      .isString()
+      .withMessage('El horario debe ser texto'),
     body('latitude')
       .if((value, { req }) => req.body.role === 'veterinary' && req.body.latitude)
       .optional()
@@ -76,6 +96,11 @@ router.post(
       .optional()
       .isFloat({ min: -180, max: 180 })
       .withMessage('Longitud inválida'),
+    body('locationAddress')
+      .if((value, { req }) => req.body.role === 'veterinary')
+      .optional()
+      .isString()
+      .withMessage('La dirección debe ser texto'),
     validationMiddleware
   ],
   register

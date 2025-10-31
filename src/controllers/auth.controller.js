@@ -38,10 +38,21 @@ const register = async (req, res, next) => {
       userData.organizationDetails = {
         organizationName: req.body.organizationName || name,
         description: req.body.description || '',
+        website: req.body.website || null,
+        logoUrl: req.body.logoUrl || null,
         capacity: req.body.capacity || 0,
         currentAnimals: 0,
         totalRescues: 0
       };
+      
+      // Agregar redes sociales si se envían
+      if (req.body.facebook || req.body.instagram || req.body.twitter) {
+        userData.organizationDetails.socialMedia = {
+          facebook: req.body.facebook || null,
+          instagram: req.body.instagram || null,
+          twitter: req.body.twitter || null
+        };
+      }
     }
 
     if (role === 'veterinary') {
@@ -49,6 +60,7 @@ const register = async (req, res, next) => {
         clinicName: req.body.clinicName || name,
         licenseNumber: req.body.licenseNumber,
         specialties: req.body.specialties || [],
+        businessHours: req.body.businessHours || null,
         totalCasesHandled: 0,
         rating: 0
       };
