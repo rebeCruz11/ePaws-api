@@ -305,6 +305,37 @@ const getOrganizationReports = async (req, res, next) => {
     next(error);
   }
 };
+/**
+ * Obtener reportes asignados a la veterinaria actual
+ * GET /api/reports/veterinary/assigned
+ */
+const getVeterinaryReports = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 20, status } = req.query;
+    const { skip, limit: limitNum, page: pageNum } = getPaginationOptions(page, limit);
+
+    // Filtrar por veterinaria actual (usuario autenticado)
+    const filters = { veterinaryId: req.user._id };
+    if (status) filters.status = status;
+
+    const [reports, total] = await Promise.all([
+      Report.find(filters)
+        .populate('reporterId', 'name email phone')
+        .populate('organizationId', 'name organizationDetails.organizationName')
+        .sort({ urgencyLevel: -1, createdAt: -1 })  // Ordena por urgencia primero
+        .skip(skip)
+        .limit(limitNum),
+      Report.countDocuments(filters)
+    ]);
+
+    res.status(200).json(
+      paginatedResponse(reports, total, pageNum, limitNum)
+    );
+
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   createReport,
@@ -313,5 +344,6 @@ module.exports = {
   updateReport,
   getNearbyReports,
   getMyReports,
-  getOrganizationReports
+  getOrganizationReports,
+  getVeterinaryReports
 };

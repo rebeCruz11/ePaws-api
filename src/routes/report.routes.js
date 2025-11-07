@@ -9,7 +9,8 @@ const {
   updateReport,
   getNearbyReports,
   getMyReports,
-  getOrganizationReports
+  getOrganizationReports,
+  getVeterinaryReports
 } = require('../controllers/report.controller');
 
 const { authMiddleware } = require('../middleware/auth.middleware');
@@ -183,6 +184,32 @@ router.put(
     validationMiddleware
   ],
   updateReport
+);
+/**
+ * @route   GET /api/reports/veterinary/assigned
+ * @desc    Obtener reportes asignados a la veterinaria actual
+ * @access  Private (Veterinary)
+ */
+router.get(
+  '/veterinary/assigned',
+  [
+    authMiddleware,
+    roleMiddleware('veterinary'),  // Solo veterinarias pueden acceder
+    query('page')
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage('Página inválida'),
+    query('limit')
+      .optional()
+      .isInt({ min: 1, max: 100 })
+      .withMessage('Límite inválido'),
+    query('status')
+      .optional()
+      .isIn(['pending', 'assigned', 'rescued', 'in_veterinary', 'recovered', 'adopted', 'closed'])
+      .withMessage('Estado inválido'),
+    validationMiddleware
+  ],
+  getVeterinaryReports
 );
 
 module.exports = router;
