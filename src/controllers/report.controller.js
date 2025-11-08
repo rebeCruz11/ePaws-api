@@ -16,7 +16,8 @@ const createReport = async (req, res, next) => {
       latitude,
       longitude,
       locationAddress,
-      photoUrls
+      photoUrls,
+      organizationId
     } = req.body;
 
     const reportData = {
@@ -30,6 +31,7 @@ const createReport = async (req, res, next) => {
       },
       locationAddress,
       photoUrls: photoUrls || [],
+      organizationId: organizationId || null,
       status: 'pending'
     };
 
