@@ -15,6 +15,7 @@ const adoptionRoutes = require('./routes/adoption.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const organizationRoutes = require('./routes/organization.routes');
 const veterinaryRoutes = require('./routes/veterinary.routes');
+const advertisementRoutes = require('./routes/advertisement.routes');
 
 /**
  * Inicializar aplicación Express
@@ -65,6 +66,7 @@ app.use('/api/adoptions', adoptionRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/veterinaries', veterinaryRoutes);
+app.use('/api/advertisements', advertisementRoutes);
 
 // Root route
 app.get('/', (req, res) => {
@@ -82,7 +84,8 @@ app.get('/', (req, res) => {
       adoptions: '/api/adoptions',
       notifications: '/api/notifications',
       organizations: '/api/organizations',
-      veterinaries: '/api/veterinaries'
+      veterinaries: '/api/veterinaries',
+      advertisements: '/api/advertisements'
     }
   });
 });
