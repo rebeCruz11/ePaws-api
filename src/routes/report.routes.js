@@ -165,7 +165,7 @@ router.put(
   '/:id',
   [
     authMiddleware,
-    roleMiddleware(['organization', 'admin']),
+    roleMiddleware(['organization', 'veterinary', 'admin']),
     param('id')
       .isMongoId()
       .withMessage('ID de reporte inválido'),
@@ -173,6 +173,35 @@ router.put(
       .optional()
       .isIn(['pending', 'assigned', 'rescued', 'in_veterinary', 'recovered', 'adopted', 'closed'])
       .withMessage('Estado inválido'),
+    // Campos editables por organizaciones y veterinarias
+    body('description')
+      .optional()
+      .isLength({ min: 10, max: 2000 })
+      .withMessage('La descripción debe tener entre 10 y 2000 caracteres'),
+    body('urgencyLevel')
+      .optional()
+      .isIn(['low', 'medium', 'high', 'critical'])
+      .withMessage('Nivel de urgencia inválido'),
+    body('animalType')
+      .optional()
+      .isIn(['dog', 'cat', 'bird', 'rabbit', 'other'])
+      .withMessage('Tipo de animal inválido'),
+    body('latitude')
+      .optional()
+      .isFloat({ min: -90, max: 90 })
+      .withMessage('Latitud inválida'),
+    body('longitude')
+      .optional()
+      .isFloat({ min: -180, max: 180 })
+      .withMessage('Longitud inválida'),
+    body('locationAddress')
+      .optional()
+      .isLength({ max: 300 })
+      .withMessage('La dirección no puede exceder 300 caracteres'),
+    body('photoUrls')
+      .optional()
+      .isArray()
+      .withMessage('photoUrls debe ser un array'),
     body('organizationId')
       .optional()
       .isMongoId()

@@ -121,7 +121,19 @@ const getReportById = async (req, res, next) => {
 const updateReport = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { status, organizationId, veterinaryId, notes } = req.body;
+    const {
+      status,
+      organizationId,
+      veterinaryId,
+      notes,
+      description,
+      urgencyLevel,
+      animalType,
+      latitude,
+      longitude,
+      locationAddress,
+      photoUrls
+    } = req.body;
 
     const report = await Report.findById(id);
 
@@ -131,14 +143,29 @@ const updateReport = async (req, res, next) => {
       );
     }
 
-    // Solo organizaciones y admin pueden actualizar reportes
-    if (req.user.role !== 'admin' && req.user.role !== 'organization') {
+    // Permitir actualizar a admin, organizaciones y veterinarias
+    if (!['admin', 'organization', 'veterinary'].includes(req.user.role)) {
       return res.status(403).json(
         errorResponse('No tienes permisos para actualizar este reporte')
       );
     }
 
-    // Actualizar campos
+    // Permitir que veterinarias editen cualquier campo: asignar valores si se proporcionan
+    if (description !== undefined) report.description = description;
+    if (urgencyLevel) report.urgencyLevel = urgencyLevel;
+    if (animalType) report.animalType = animalType;
+
+    if (latitude !== undefined && longitude !== undefined) {
+      report.location = {
+        type: 'Point',
+        coordinates: [parseFloat(longitude), parseFloat(latitude)]
+      };
+    }
+
+    if (locationAddress !== undefined) report.locationAddress = locationAddress;
+    if (photoUrls !== undefined) report.photoUrls = photoUrls;
+
+    // Manejo de status (mantener lógica existente)
     if (status) {
       const previousStatus = report.status;
       report.status = status;
