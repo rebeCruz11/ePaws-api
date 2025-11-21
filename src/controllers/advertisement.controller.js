@@ -68,6 +68,15 @@ const createAdvertisement = async (req, res, next) => {
       paymentInfo.transactionId = transactionId;
     }
 
+    // Calcular fechas de inicio y expiración
+    const startDate = new Date();
+    const expirationDate = new Date(startDate);
+    if (plan === 'monthly') {
+      expirationDate.setMonth(expirationDate.getMonth() + 1);
+    } else if (plan === 'annual') {
+      expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+    }
+
     // Crear publicidad
     const advertisementData = {
       userId: req.user._id,
@@ -78,6 +87,8 @@ const createAdvertisement = async (req, res, next) => {
       linkUrl,
       plan,
       price,
+      startDate,
+      expirationDate,
       paymentInfo
     };
 
