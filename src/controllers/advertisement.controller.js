@@ -89,6 +89,8 @@ const createAdvertisement = async (req, res, next) => {
       price,
       startDate,
       expirationDate,
+      status: 'active',
+      isActive: true,
       paymentInfo
     };
 
