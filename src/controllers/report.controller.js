@@ -189,32 +189,36 @@ const updateReport = async (req, res, next) => {
       });
     }
 
-    if (organizationId) {
+    if (organizationId !== undefined) {
       report.organizationId = organizationId;
       
-      // Notificar a la organización
-      await Notification.createNotification({
-        userId: organizationId,
-        type: 'new_case',
-        title: 'Nuevo caso asignado',
-        body: `Se te ha asignado un nuevo caso de ${report.animalType}`,
-        relatedId: report._id,
-        relatedType: 'Report'
-      });
+      // Notificar a la organización solo si se está asignando (no null)
+      if (organizationId) {
+        await Notification.createNotification({
+          userId: organizationId,
+          type: 'new_case',
+          title: 'Nuevo caso asignado',
+          body: `Se te ha asignado un nuevo caso de ${report.animalType}`,
+          relatedId: report._id,
+          relatedType: 'Report'
+        });
+      }
     }
 
-    if (veterinaryId) {
+    if (veterinaryId !== undefined) {
       report.veterinaryId = veterinaryId;
       
-      // Notificar a la veterinaria
-      await Notification.createNotification({
-        userId: veterinaryId,
-        type: 'new_case',
-        title: 'Nuevo caso veterinario',
-        body: `Se te ha asignado un nuevo caso médico`,
-        relatedId: report._id,
-        relatedType: 'Report'
-      });
+      // Notificar a la veterinaria solo si se está asignando (no null)
+      if (veterinaryId) {
+        await Notification.createNotification({
+          userId: veterinaryId,
+          type: 'new_case',
+          title: 'Nuevo caso veterinario',
+          body: `Se te ha asignado un nuevo caso médico`,
+          relatedId: report._id,
+          relatedType: 'Report'
+        });
+      }
     }
 
     if (notes !== undefined) report.notes = notes;
